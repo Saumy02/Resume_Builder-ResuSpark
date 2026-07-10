@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResuSpark | Made by Sam :) for my Loved One</title>
+    <!-- Google Fonts: Inter, Outfit, Fira Code, Grand Hotel, Playfair Display, Montserrat, Merriweather -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Grand+Hotel&family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&family=Montserrat:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Premium Floating Glass Navbar -->
+    <header class="main-header py-3 px-4 d-flex justify-content-between align-items-center">
+        <div class="logo d-flex align-items-center gap-4">
+            <div class="d-flex align-items-center">
+                <div class="logo-icon text-white rounded-3 me-2 d-flex align-items-center justify-content-center">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <div>
+                    <span class="fw-bold fs-4 logo-text">ResuSpark</span>
+                    <span class="badge bg-love-soft text-love fs-xs ms-2 px-2 py-1"><i class="fas fa-heart me-1"></i>Made by Sam :) for my Loved One</span>
+                </div>
+            </div>
+
+            <!-- Profile Dropdown (Moved to Left Side) -->
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-tie me-2"></i>Load Sample Profile
+                </button>
+                <ul class="dropdown-menu shadow border-0" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item py-2" href="#" onclick="loadProfile('it')"><i class="fas fa-code me-2 text-primary"></i>IT & Software Engineer</a></li>
+                    <li><a class="dropdown-item py-2" href="#" onclick="loadProfile('creative')"><i class="fas fa-paint-brush me-2 text-rose"></i>UI/UX Designer</a></li>
+                    <li><a class="dropdown-item py-2" href="#" onclick="loadProfile('corporate')"><i class="fas fa-briefcase me-2 text-success"></i>Senior Project Manager</a></li>
+                    <li><a class="dropdown-item py-2" href="#" onclick="loadProfile('marketing')"><i class="fas fa-bullhorn me-2 text-warning"></i>Growth Marketer</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="header-actions d-flex align-items-center gap-3">
+            <!-- Zoom Controller (Canva Style) -->
+            <div class="zoom-controls d-flex align-items-center gap-2 me-2">
+                <i class="fas fa-search-minus text-muted small"></i>
+                <input type="range" id="zoomRange" min="50" max="110" value="100" class="form-range" oninput="adjustZoom(this.value)">
+                <i class="fas fa-search-plus text-muted small"></i>
+                <span id="zoomVal" class="small fw-semibold text-muted" style="min-width: 35px;">100%</span>
+            </div>
+            
+            <button id="resetLayoutBtn" onclick="resetLayout()" class="btn btn-outline-danger btn-sm" title="Reset layout and columns">
+                <i class="fas fa-undo me-1"></i>Reset Layout
+            </button>
+
+            <button id="downloadBtn" onclick="printCV()" class="btn btn-primary btn-sm px-3 shadow-glow">
+                <i class="fas fa-download me-2"></i>Download PDF
+            </button>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Left Editor Dashboard (Canva Style) -->
+        <section id="cv-form" class="form-section d-flex flex-column">
+            <!-- Navigation Tabs -->
+            <div class="sidebar-tabs d-flex">
+                <button class="tab-btn active flex-fill" onclick="switchTab('templates-tab')">
+                    <i class="fas fa-th-large me-2"></i>Templates
+                </button>
+                <button class="tab-btn flex-fill" onclick="switchTab('content-tab')">
+                    <i class="fas fa-edit me-2"></i>Content
+                </button>
+                <button class="tab-btn flex-fill" onclick="switchTab('design-tab')">
+                    <i class="fas fa-paint-brush me-2"></i>Design
+                </button>
+            </div>
+
+            <!-- Tab Panels -->
+            <div class="tab-content flex-grow-1 p-4 overflow-y-auto">
+                
+                <!-- TEMPLATES TAB -->
+                <div id="templates-tab" class="tab-pane active">
+                    <h5 class="fw-bold mb-3">Choose Resume Style</h5>
+                    <p class="text-muted small mb-4">Select an industry design. You can drag and drop sections to rearrange the layout anytime.</p>
+                    
+                    <div class="template-grid-list d-flex flex-column gap-3">
+                        <!-- Modern Sidebar Card -->
+                        <div class="template-card p-3 border rounded-3 cursor-pointer" onclick="selectTemplate('variant1')">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="fw-semibold text-white"><i class="fas fa-columns me-2 text-primary"></i>Modern Sidebar</span>
+                                <span class="badge bg-primary-soft text-primary fs-xxs">Best for Tech & Corp</span>
+                            </div>
+                            <div class="template-card-preview border rounded position-relative overflow-hidden" style="height: 100px;">
+                                <div class="bg-dark text-white p-2 d-flex justify-content-between align-items-center" style="height: 25px; font-size: 8px;">
+                                    <span>YOUR NAME</span>
+                                    <span>TITLES</span>
+                                </div>
+                                <div class="row g-0" style="height: 75px;">
+                                    <div class="col-4 bg-secondary-subtle p-1 border-end" style="font-size: 6px;">Contact | Skills</div>
+                                    <div class="col-8 p-1" style="font-size: 6px;">Experience | Education</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sleek Split Card -->
+                        <div class="template-card p-3 border rounded-3 cursor-pointer" onclick="selectTemplate('variant4')">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="fw-semibold text-white"><i class="fas fa-columns me-2 text-rose"></i>Sleek Split</span>
+                                <span class="badge bg-rose-soft text-rose fs-xxs">Best for Creative</span>
+                            </div>
+                            <div class="template-card-preview border rounded position-relative overflow-hidden" style="height: 100px;">
+                                <div class="bg-rose text-white p-2 d-flex justify-content-between align-items-center" style="height: 25px; font-size: 8px;">
+                                    <span>YOUR NAME</span>
+                                    <span>CREATIVE</span>
+                                </div>
+                                <div class="row g-0" style="height: 75px;">
+                                    <div class="col-6 p-1 border-end" style="font-size: 6px;">Experience | Projects</div>
+                                    <div class="col-6 p-1 bg-light" style="font-size: 6px;">Skills | Edu</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Classic Centered Card -->
+                        <div class="template-card p-3 border rounded-3 cursor-pointer" onclick="selectTemplate('variant2')">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="fw-semibold text-white"><i class="fas fa-align-center me-2 text-success"></i>Classic Centered</span>
+                                <span class="badge bg-success-soft text-success fs-xxs">Formal & ATS-Friendly</span>
+                            </div>
+                            <div class="template-card-preview border rounded position-relative overflow-hidden" style="height: 100px;">
+                                <div class="p-2 text-center border-bottom bg-light" style="height: 35px; font-size: 8px; font-weight: bold;">
+                                    <div>YOUR NAME</div>
+                                    <div style="font-size: 6px; font-weight: normal;">Corporate Leader</div>
+                                </div>
+                                <div class="p-2" style="font-size: 6px;">
+                                    <div>Summary &bull; Experience &bull; Education &bull; Skills</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Minimalist Card -->
+                        <div class="template-card p-3 border rounded-3 cursor-pointer" onclick="selectTemplate('variant3')">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="fw-semibold text-white"><i class="fas fa-list me-2 text-white"></i>Minimalist Clean</span>
+                                <span class="badge bg-dark-soft text-light fs-xxs">Simple & Professional</span>
+                            </div>
+                            <div class="template-card-preview border rounded position-relative overflow-hidden" style="height: 100px;">
+                                <div class="p-2 border-bottom" style="height: 30px; font-size: 8px;">
+                                    <div>YOUR NAME</div>
+                                </div>
+                                <div class="p-2" style="font-size: 6px;">
+                                    <div>Summary | Experience | Projects</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Technical Grid Card -->
+                        <div class="template-card p-3 border rounded-3 cursor-pointer" onclick="selectTemplate('variant5')">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="fw-semibold text-white"><i class="fas fa-th-large me-2 text-info"></i>Technical Grid</span>
+                                <span class="badge bg-info-soft text-info fs-xxs">Compact Structured</span>
+                            </div>
+                            <div class="template-card-preview border rounded position-relative overflow-hidden" style="height: 100px;">
+                                <div class="bg-dark text-white p-2" style="height: 25px; font-size: 8px;">
+                                    <span>YOUR NAME | DEVELOPER</span>
+                                </div>
+                                <div class="row g-1 p-1" style="height: 75px;">
+                                    <div class="col-6 border p-1" style="font-size: 5px;">Experience</div>
+                                    <div class="col-6 border p-1" style="font-size: 5px;">Skills</div>
+                                    <div class="col-6 border p-1" style="font-size: 5px;">Education</div>
+                                    <div class="col-6 border p-1" style="font-size: 5px;">Projects</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTENT TAB -->
+                <div id="content-tab" class="tab-pane d-none">
+                    <h5 class="fw-bold mb-3">Resume Content</h5>
+                    <p class="text-muted small mb-4">Fill in your information below or edit directly on the resume page on the right!</p>
+                    
+                    <div class="accordion" id="formAccordion">
+                        <!-- Personal Info -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonal">
+                                    <i class="fas fa-user-circle me-2 text-primary"></i>Personal Information
+                                </button>
+                            </h2>
+                            <div id="collapsePersonal" class="accordion-collapse collapse show" data-bs-parent="#formAccordion">
+                                <div class="accordion-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Full Name</label>
+                                            <input type="text" id="nameField" class="form-control form-control-sm" placeholder="e.g. Sam Malhotra">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Professional Title</label>
+                                            <input type="text" id="clField" class="form-control form-control-sm" placeholder="e.g. Full Stack Developer">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Email</label>
+                                            <input type="email" id="emailField" class="form-control form-control-sm" placeholder="e.g. sam.dev@tech.io">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Contact</label>
+                                            <input type="text" id="contactField" class="form-control form-control-sm" placeholder="e.g. +91 87654 32109">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">Address</label>
+                                            <input type="text" id="addressField" class="form-control form-control-sm" placeholder="e.g. Bangalore, India">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">Profile Photo</label>
+                                            <input type="file" id="imgField" class="form-control form-control-sm" accept="image/*">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Links -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLinks">
+                                    <i class="fas fa-link me-2 text-primary"></i>Social Links
+                                </button>
+                            </h2>
+                            <div id="collapseLinks" class="accordion-collapse collapse" data-bs-parent="#formAccordion">
+                                <div class="accordion-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">LinkedIn (URL)</label>
+                                            <input type="text" id="linkField" class="form-control form-control-sm" placeholder="e.g. linkedin.com/in/samdev">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">GitHub/Portfolio (URL)</label>
+                                            <input type="text" id="fbField" class="form-control form-control-sm" placeholder="e.g. github.com/samdev">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">Twitter/Social (URL)</label>
+                                            <input type="text" id="instaField" class="form-control form-control-sm" placeholder="e.g. twitter.com/sam_codes">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Summary -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseObjective">
+                                    <i class="fas fa-bullseye me-2 text-primary"></i>Professional Summary
+                                </button>
+                            </h2>
+                            <div id="collapseObjective" class="accordion-collapse collapse" data-bs-parent="#formAccordion">
+                                <div class="accordion-body">
+                                    <textarea id="objectiveField" class="form-control form-control-sm" rows="4" placeholder="e.g. Passionate Full Stack Developer (Sam) with 4+ years of experience building web applications using React, Node.js, and AWS cloud architectures..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skills -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSkills">
+                                    <i class="fas fa-tools me-2 text-primary"></i>Skills
+                                </button>
+                            </h2>
+                            <div id="collapseSkills" class="accordion-collapse collapse" data-bs-parent="#formAccordion">
+                                <div class="accordion-body">
+                                    <div id="sk">
+                                        <div class="input-group mb-2">
+                                            <input type="text" class="form-control form-control-sm skField" placeholder="e.g. JavaScript">
+                                            <button class="btn btn-outline-danger btn-sm" type="button" onclick="this.closest('.input-group').remove(); syncSkills()"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </div>
+                                    <button onclick="addNewSKfield()" class="btn btn-outline-primary btn-sm mt-2">
+                                        <i class="fas fa-plus me-1"></i>Add Skill
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Education -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEdu">
+                                    <i class="fas fa-graduation-cap me-2 text-primary"></i>Education
+                                </button>
+                            </h2>
+                            <div id="collapseEdu" class="accordion-collapse collapse" data-bs-parent="#formAccordion">
+                                <div class="accordion-body">
+                                    <div id="aq">
+                                        <div class="education-block border-bottom pb-2 mb-2 position-relative">
+                                            <textarea class="form-control form-control-sm aqField" rows="2" placeholder="e.g. Bachelor of Technology, ABC University (2020-2024)"></textarea>
+                                            <button class="btn btn-link text-danger btn-sm position-absolute top-0 end-0 p-1" onclick="this.closest('.education-block').remove(); syncEducation()"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    </div>
+                                    <button onclick="addNewAQfield()" class="btn btn-outline-primary btn-sm mt-2">
+                                        <i class="fas fa-plus me-1"></i>Add Education
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Experience -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExp">
+                                    <i class="fas fa-briefcase me-2 text-primary"></i>Work Experience
+                                </button>
+                            </h2>
+                            <div id="collapseExp" class="accordion-collapse collapse" data-bs-parent="#formAccordion">
+                                <div class="accordion-body">
+                                    <div id="we">
+                                        <div class="experience-block border-bottom pb-2 mb-2 position-relative">
+                                            <textarea class="form-control form-control-sm weField" rows="3" placeholder="e.g. Software Intern at XYZ Corp - Worked on UI optimization..."></textarea>
+                                            <button class="btn btn-link text-danger btn-sm position-absolute top-0 end-0 p-1" onclick="this.closest('.experience-block').remove(); syncExperience()"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    </div>
+                                    <button onclick="addNewWEfield()" class="btn btn-outline-primary btn-sm mt-2">
+                                        <i class="fas fa-plus me-1"></i>Add Experience
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Projects -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProj">
+                                    <i class="fas fa-project-diagram me-2 text-primary"></i>Projects
+                                </button>
+                            </h2>
+                            <div id="collapseProj" class="accordion-collapse collapse" data-bs-parent="#formAccordion">
+                                <div class="accordion-body">
+                                    <div id="pr">
+                                        <div class="project-block border-bottom pb-2 mb-2 position-relative">
+                                            <textarea class="form-control form-control-sm prField" rows="2" placeholder="e.g. E-commerce App - Built using React and Node.js"></textarea>
+                                            <button class="btn btn-link text-danger btn-sm position-absolute top-0 end-0 p-1" onclick="this.closest('.project-block').remove(); syncProjects()"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    </div>
+                                    <button onclick="addNewPRfield()" class="btn btn-outline-primary btn-sm mt-2">
+                                        <i class="fas fa-plus me-1"></i>Add Project
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom Section -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCustom">
+                                    <i class="fas fa-folder-plus me-2 text-primary"></i>Custom Sections
+                                </button>
+                            </h2>
+                            <div id="collapseCustom" class="accordion-collapse collapse" data-bs-parent="#formAccordion">
+                                <div class="accordion-body">
+                                    <div id="custom-sections"></div>
+                                    <button onclick="addCustomSection()" class="btn btn-outline-primary btn-sm mt-2 w-100 border-dashed">
+                                        <i class="fas fa-plus-circle me-1"></i> Add Custom Section
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DESIGN TAB -->
+                <div id="design-tab" class="tab-pane d-none">
+                    <h5 class="fw-bold mb-3">Design Customizer</h5>
+                    
+                    <!-- Font Pairing selector -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold">Typography / Fonts</label>
+                        <select id="fontSelector" class="form-select form-select-sm" onchange="changeFontPairing()">
+                            <option value="modern">Inter & Outfit (Modern & Clean)</option>
+                            <option value="executive">Playfair Display & Merriweather (Executive)</option>
+                            <option value="creative">Montserrat & Outfit (Creative & Geometric)</option>
+                            <option value="technical">Fira Code & Inter (Developer Technical)</option>
+                        </select>
+                    </div>
+
+                    <!-- Colors -->
+                    <div class="mb-4 border-top pt-3 border-secondary">
+                        <label class="form-label small fw-bold d-block mb-2">Preset Palettes</label>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button class="color-preset-btn" style="background: linear-gradient(135deg, #2563eb, #1e293b);" onclick="applyPalette('#2563eb', '#1e293b')" title="Ocean Blue"></button>
+                            <button class="color-preset-btn" style="background: linear-gradient(135deg, #059669, #1f2937);" onclick="applyPalette('#059669', '#1f2937')" title="Forest Green"></button>
+                            <button class="color-preset-btn" style="background: linear-gradient(135deg, #db2777, #1e293b);" onclick="applyPalette('#db2777', '#1e293b')" title="Sunset Rose"></button>
+                            <button class="color-preset-btn" style="background: linear-gradient(135deg, #b45309, #1c1917);" onclick="applyPalette('#b45309', '#1c1917')" title="Royal Gold"></button>
+                            <button class="color-preset-btn" style="background: linear-gradient(135deg, #4b5563, #111827);" onclick="applyPalette('#4b5563', '#111827')" title="Dark Slate"></button>
+                        </div>
+
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label small">Theme Primary</label>
+                                <div class="d-flex">
+                                    <input type="color" id="primaryColorPicker" class="form-control form-control-color me-2" value="#2563eb">
+                                    <span class="small align-self-center text-muted">Primary</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Text Color</label>
+                                <div class="d-flex">
+                                    <input type="color" id="textColorPicker" class="form-control form-control-color me-2" value="#1e293b">
+                                    <span class="small align-self-center text-muted">Text</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Background Style -->
+                    <div class="mb-4 border-top pt-3 border-secondary">
+                        <label class="form-label small fw-bold">Page Canvas Background</label>
+                        <select id="bgSelector" class="form-select form-select-sm" onchange="changeBackground()">
+                            <option value="plain">Solid White</option>
+                            <option value="dots">Subtle Dots</option>
+                            <option value="grid">Technical Grid</option>
+                            <option value="gradient">Soft Gradient</option>
+                            <option value="texture">Paper Texture</option>
+                        </select>
+                    </div>
+
+                    <!-- Layout Sizing Controls -->
+                    <div class="mb-4 border-top pt-3 border-secondary">
+                        <label class="form-label small fw-bold d-block mb-3">Layout Spacing</label>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label class="small text-secondary">Section Spacing</label>
+                                <span id="sectionSpaceVal" class="small fw-semibold">12px</span>
+                            </div>
+                            <input type="range" class="form-range" id="sectionSpaceRange" min="4" max="28" value="12" oninput="adjustLayoutSpacing('section', this.value)">
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label class="small text-secondary">Font Size multiplier</label>
+                                <span id="fontSizeVal" class="small fw-semibold">1.0</span>
+                            </div>
+                            <input type="range" class="form-range" id="fontSizeRange" min="0.8" max="1.3" step="0.05" value="1.0" oninput="adjustLayoutSpacing('font', this.value)">
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label class="small text-secondary">Photo Border Radius</label>
+                                <span id="radiusVal" class="small fw-semibold">50%</span>
+                            </div>
+                            <input type="range" class="form-range" id="radiusRange" min="0" max="50" step="5" value="50" oninput="adjustLayoutSpacing('radius', this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Field Visibility -->
+                    <div class="mb-4 border-top pt-3 border-secondary">
+                        <label class="form-label small fw-bold d-block mb-2">Section Visibility</label>
+                        
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="showPhoto" checked onchange="toggleField('photo')">
+                            <label class="form-check-label small" for="showPhoto">Show Profile Image</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="showAddress" checked onchange="toggleField('address')">
+                            <label class="form-check-label small" for="showAddress">Show Address Details</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="showSocial" checked onchange="toggleField('social')">
+                            <label class="form-check-label small" for="showSocial">Show Social Links</label>
+                        </div>
+                        
+                        <!-- Extra visibility hooks for direct edit controls -->
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="showObjective" checked onchange="toggleFieldSec('objective')">
+                            <label class="form-check-label small" for="showObjective">Show Summary Section</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="showExperience" checked onchange="toggleFieldSec('experience')">
+                            <label class="form-check-label small" for="showExperience">Show Experience Section</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="showEducation" checked onchange="toggleFieldSec('education')">
+                            <label class="form-check-label small" for="showEducation">Show Education Section</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="showProjects" checked onchange="toggleFieldSec('projects')">
+                            <label class="form-check-label small" for="showProjects">Show Projects Section</label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Right Preview Workspace (Canva Sheet Canvas) -->
+        <section class="preview-section p-4">
+            <div id="cv-template" class="resume-sheet shadow-lg template-modern bg-plain">
+                
+                <!-- Resume Header -->
+                <div class="resume-header text-white p-5 d-flex align-items-center position-relative">
+                    <div class="resume-photo-container me-4" id="photo-box">
+                        <img src="https://via.placeholder.com/150" alt="Profile" id="imgTam" class="resume-photo">
+                    </div>
+                    <div class="header-name-box">
+                        <h1 id="nameT2" class="display-5 fw-bold mb-0 text-white" contenteditable="true" data-field="nameField">Your Name</h1>
+                        <p id="nameT3" class="fs-4 text-light-emphasis opacity-75 mb-0" contenteditable="true" data-field="clField">Professional Title</p>
+                    </div>
+                </div>
+
+                <!-- Resume Body -->
+                <div class="resume-body row g-0 flex-grow-1">
+                    <!-- Left Sidebar Dropzone -->
+                    <div id="left-dropzone" class="sidebar cv-dropzone col-4 p-4 text-white" data-dropzone="sidebar">
+                        
+                        <!-- Contact Section -->
+                        <div class="cv-section" draggable="true" id="sec-contact" data-section="contact">
+                            <div class="section-hover-controls">
+                                <span class="drag-handle" title="Drag to Reorder"><i class="fas fa-grip-vertical"></i></span>
+                                <button class="section-action-btn" onclick="moveSection('contact', 'up')" title="Move Up"><i class="fas fa-chevron-up"></i></button>
+                                <button class="section-action-btn" onclick="moveSection('contact', 'down')" title="Move Down"><i class="fas fa-chevron-down"></i></button>
+                                <button class="section-action-btn text-danger" onclick="hideSection('contact')" title="Hide Section"><i class="fas fa-eye-slash"></i></button>
+                            </div>
+                            <h5 class="fw-bold mb-3">CONTACT</h5>
+                            <div class="section-content">
+                                <p class="small mb-2"><i class="fas fa-phone me-2 text-white"></i><span id="contactT" contenteditable="true" data-field="contactField">+91 1234567890</span></p>
+                                <p class="small mb-2 text-truncate"><i class="fas fa-envelope me-2 text-white"></i><span id="emailT" contenteditable="true" data-field="emailField">email@example.com</span></p>
+                                <p class="small mb-0"><i class="fas fa-location-dot me-2 text-white"></i><span id="addressT" contenteditable="true" data-field="addressField">City, Country</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Skills Section -->
+                        <div class="cv-section" draggable="true" id="sec-skills" data-section="skills">
+                            <div class="section-hover-controls">
+                                <span class="drag-handle" title="Drag to Reorder"><i class="fas fa-grip-vertical"></i></span>
+                                <button class="section-action-btn" onclick="moveSection('skills', 'up')" title="Move Up"><i class="fas fa-chevron-up"></i></button>
+                                <button class="section-action-btn" onclick="moveSection('skills', 'down')" title="Move Down"><i class="fas fa-chevron-down"></i></button>
+                                <button class="section-action-btn text-danger" onclick="hideSection('skills')" title="Hide Section"><i class="fas fa-eye-slash"></i></button>
+                            </div>
+                            <h5 class="fw-bold mb-3">SKILLS</h5>
+                            <div class="section-content">
+                                <ul id="skT" class="list-unstyled mb-0 d-flex flex-wrap gap-1">
+                                    <li class="badge bg-secondary mb-1 me-1">Skill 1</li>
+                                    <li class="badge bg-secondary mb-1 me-1">Skill 2</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Links Section -->
+                        <div class="cv-section" draggable="true" id="sec-links" data-section="links">
+                            <div class="section-hover-controls">
+                                <span class="drag-handle" title="Drag to Reorder"><i class="fas fa-grip-vertical"></i></span>
+                                <button class="section-action-btn" onclick="moveSection('links', 'up')" title="Move Up"><i class="fas fa-chevron-up"></i></button>
+                                <button class="section-action-btn" onclick="moveSection('links', 'down')" title="Move Down"><i class="fas fa-chevron-down"></i></button>
+                                <button class="section-action-btn text-danger" onclick="hideSection('links')" title="Hide Section"><i class="fas fa-eye-slash"></i></button>
+                            </div>
+                            <h5 class="fw-bold mb-3">LINKS</h5>
+                            <div class="section-content small">
+                                <p class="mb-1 text-truncate"><i class="fab fa-linkedin me-2 text-white"></i><a id="linkT" href="#" class="text-white text-decoration-none" contenteditable="true" data-field="linkField">linkedin.com/in/user</a></p>
+                                <p class="mb-1 text-truncate"><i class="fab fa-github me-2 text-white"></i><a id="fbT" href="#" class="text-white text-decoration-none" contenteditable="true" data-field="fbField">github.com/user</a></p>
+                                <p class="mb-0 text-truncate"><i class="fab fa-twitter me-2 text-white"></i><a id="instaT" href="#" class="text-white text-decoration-none" contenteditable="true" data-field="instaField">twitter.com/user</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Main Content Dropzone -->
+                    <div id="right-dropzone" class="main-content cv-dropzone col-8 p-4 bg-white" data-dropzone="main">
+                        
+                        <!-- Objective / Summary Section -->
+                        <div class="cv-section" draggable="true" id="sec-objective" data-section="objective">
+                            <div class="section-hover-controls">
+                                <span class="drag-handle" title="Drag to Reorder"><i class="fas fa-grip-vertical"></i></span>
+                                <button class="section-action-btn" onclick="moveSection('objective', 'up')" title="Move Up"><i class="fas fa-chevron-up"></i></button>
+                                <button class="section-action-btn" onclick="moveSection('objective', 'down')" title="Move Down"><i class="fas fa-chevron-down"></i></button>
+                                <button class="section-action-btn text-danger" onclick="hideSection('objective')" title="Hide Section"><i class="fas fa-eye-slash"></i></button>
+                            </div>
+                            <h5 class="fw-bold text-primary mb-3">SUMMARY</h5>
+                            <div class="section-content">
+                                <p id="objectiveT" class="text-secondary small" contenteditable="true" data-field="objectiveField">Your professional summary will appear here...</p>
+                            </div>
+                        </div>
+
+                        <!-- Experience Section -->
+                        <div class="cv-section" draggable="true" id="sec-experience" data-section="experience">
+                            <div class="section-hover-controls">
+                                <span class="drag-handle" title="Drag to Reorder"><i class="fas fa-grip-vertical"></i></span>
+                                <button class="section-action-btn" onclick="moveSection('experience', 'up')" title="Move Up"><i class="fas fa-chevron-up"></i></button>
+                                <button class="section-action-btn" onclick="moveSection('experience', 'down')" title="Move Down"><i class="fas fa-chevron-down"></i></button>
+                                <button class="section-action-btn text-danger" onclick="hideSection('experience')" title="Hide Section"><i class="fas fa-eye-slash"></i></button>
+                            </div>
+                            <h5 class="fw-bold text-primary mb-3">EXPERIENCE</h5>
+                            <div class="section-content">
+                                <ul id="weT" class="list-unstyled small text-secondary">
+                                    <li>Loading work experience...</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Education Section -->
+                        <div class="cv-section" draggable="true" id="sec-education" data-section="education">
+                            <div class="section-hover-controls">
+                                <span class="drag-handle" title="Drag to Reorder"><i class="fas fa-grip-vertical"></i></span>
+                                <button class="section-action-btn" onclick="moveSection('education', 'up')" title="Move Up"><i class="fas fa-chevron-up"></i></button>
+                                <button class="section-action-btn" onclick="moveSection('education', 'down')" title="Move Down"><i class="fas fa-chevron-down"></i></button>
+                                <button class="section-action-btn text-danger" onclick="hideSection('education')" title="Hide Section"><i class="fas fa-eye-slash"></i></button>
+                            </div>
+                            <h5 class="fw-bold text-primary mb-3">EDUCATION</h5>
+                            <div class="section-content">
+                                <ul id="aqT" class="list-unstyled small text-secondary">
+                                    <li>Loading education details...</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Projects Section -->
+                        <div class="cv-section" draggable="true" id="sec-projects" data-section="projects">
+                            <div class="section-hover-controls">
+                                <span class="drag-handle" title="Drag to Reorder"><i class="fas fa-grip-vertical"></i></span>
+                                <button class="section-action-btn" onclick="moveSection('projects', 'up')" title="Move Up"><i class="fas fa-chevron-up"></i></button>
+                                <button class="section-action-btn" onclick="moveSection('projects', 'down')" title="Move Down"><i class="fas fa-chevron-down"></i></button>
+                                <button class="section-action-btn text-danger" onclick="hideSection('projects')" title="Hide Section"><i class="fas fa-eye-slash"></i></button>
+                            </div>
+                            <h5 class="fw-bold text-primary mb-3">PROJECTS</h5>
+                            <div class="section-content">
+                                <ul id="prT" class="list-unstyled small text-secondary">
+                                    <li>Loading project details...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification for actions -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1050;">
+        <div id="actionToast" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">
+                    Action executed successfully.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap & Custom Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
