@@ -72,13 +72,16 @@
             <!-- Navigation Tabs -->
             <div class="sidebar-tabs d-flex">
                 <button class="tab-btn active flex-fill" onclick="switchTab('templates-tab')">
-                    <i class="fas fa-th-large me-2"></i>Templates
+                    <i class="fas fa-th-large me-1"></i><span class="d-none d-lg-inline">Templates</span>
                 </button>
                 <button class="tab-btn flex-fill" onclick="switchTab('content-tab')">
-                    <i class="fas fa-edit me-2"></i>Content
+                    <i class="fas fa-edit me-1"></i><span class="d-none d-lg-inline">Content</span>
                 </button>
                 <button class="tab-btn flex-fill" onclick="switchTab('design-tab')">
-                    <i class="fas fa-paint-brush me-2"></i>Design
+                    <i class="fas fa-paint-brush me-1"></i><span class="d-none d-lg-inline">Design</span>
+                </button>
+                <button class="tab-btn flex-fill" onclick="switchTab('ai-tab')">
+                    <i class="fas fa-robot text-primary-glow me-1"></i><span class="d-none d-lg-inline">AI Assistant</span>
                 </button>
             </div>
 
@@ -492,6 +495,73 @@
                         <div class="form-check form-switch mb-2">
                             <input class="form-check-input" type="checkbox" id="showProjects" checked onchange="toggleFieldSec('projects')">
                             <label class="form-check-label small" for="showProjects">Show Projects Section</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI ASSISTANT TAB -->
+                <div id="ai-tab" class="tab-pane d-none">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-robot me-2 text-primary"></i>AI ResuSpark Assistant</h5>
+                    <p class="text-muted small mb-4">Apni details Hinglish, Hindi, Bengali ya kisi bhi language me likhein, AI automatically aapka resume update kar dega!</p>
+                    
+                    <!-- API Key Configuration card -->
+                    <div class="card bg-dark border-secondary mb-4 text-white">
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small fw-bold"><i class="fas fa-key text-warning me-2"></i>Gemini API Key</span>
+                                <span id="apiKeyBadge" class="badge bg-danger-soft text-danger fs-xxs">Not Configured</span>
+                            </div>
+                            <div id="apiKeySetupContainer">
+                                <p class="text-muted fs-xs mb-3">AI features use karne ke liye, aapko ek free API key generate karni hogi.</p>
+                                <div class="input-group input-group-sm mb-2">
+                                    <input type="password" id="geminiApiKeyInput" class="form-control bg-secondary text-white border-secondary" placeholder="Enter Gemini API Key...">
+                                    <button class="btn btn-primary" onclick="saveGeminiApiKey()"><i class="fas fa-save"></i> Save</button>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <a href="https://aistudio.google.com/" target="_blank" class="fs-xs text-primary-glow text-decoration-none"><i class="fas fa-external-link-alt me-1"></i>Get Free API Key (10s)</a>
+                                </div>
+                            </div>
+                            <div id="apiKeyActiveContainer" class="d-none">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fs-xs text-success"><i class="fas fa-check-circle me-1"></i>Connected to Gemini</span>
+                                    <button class="btn btn-link text-warning p-0 fs-xs text-decoration-none" onclick="editGeminiApiKey()"><i class="fas fa-edit me-1"></i>Edit Key</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Input Section -->
+                    <div id="aiAssistantContainer" class="opacity-50 pointer-events-none">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Describe yourself or update info</label>
+                            <textarea id="aiInputText" class="form-control form-control-sm text-white bg-dark border-secondary" rows="6" placeholder="E.g., Mera naam Amit Sharma hai. Maine 2024 me IIT Delhi se B.Tech kiya Computer Science me IIT Delhi se..."></textarea>
+                        </div>
+                        
+                        <!-- Examples/Presets -->
+                        <div class="mb-3">
+                            <label class="form-label fs-xs text-secondary d-block">Quick Examples (Click to Try):</label>
+                            <div class="d-flex flex-column gap-2">
+                                <button class="btn btn-outline-secondary btn-xs text-start p-2 fs-xxs text-light" onclick="loadAiExample(1)">
+                                    <strong>Hinglish (Full Profile):</strong> "Mera naam Amit Sharma hai..."
+                                </button>
+                                <button class="btn btn-outline-secondary btn-xs text-start p-2 fs-xxs text-light" onclick="loadAiExample(2)">
+                                    <strong>English (Update Experience):</strong> "Please add a new experience to my resume..."
+                                </button>
+                            </div>
+                        </div>
+
+                        <button id="aiProcessBtn" onclick="processResumeWithAi()" class="btn btn-primary btn-sm w-100 shadow-glow py-2">
+                            <i class="fas fa-magic me-2"></i>Magic Update Resume
+                        </button>
+                        
+                        <!-- Status Log -->
+                        <div id="aiStatusLog" class="mt-3 p-3 bg-dark border-secondary rounded d-none" style="max-height: 150px; overflow-y: auto;">
+                            <div class="d-flex align-items-center gap-2 mb-2" id="aiStatusHeader">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                <span class="small fw-bold text-white" id="aiStatusTitle">Analyzing input...</span>
+                            </div>
+                            <ul class="list-unstyled mb-0 fs-xs text-muted" id="aiStatusList">
+                            </ul>
                         </div>
                     </div>
                 </div>

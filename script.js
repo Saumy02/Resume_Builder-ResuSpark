@@ -286,16 +286,18 @@ function setupCanvasInlineListeners() {
 }
 
 // --- SYNC DYNAMIC LISTS TO PREVIEW DOM ---
+// --- SYNC DYNAMIC LISTS TO PREVIEW DOM ---
 function syncSkills() {
     const inputs = document.getElementsByClassName("skField");
     let html = "";
     for (let i = 0; i < inputs.length; i++) {
         const val = inputs[i].value.trim();
         if (val) {
-            html += `<li class="badge bg-secondary mb-1 me-1" contenteditable="true" data-field-group="sk" data-index="${i}">${val}</li>`;
+            html += `<li class="badge bg-secondary mb-1 me-1 preview-item position-relative pe-3" contenteditable="true" data-field-group="sk" data-index="${i}" style="transition: all 0.2s;">${val}<button class="delete-item-btn no-print" contenteditable="false" onclick="deleteListItem('sk', ${i})"><i class="fas fa-times"></i></button></li>`;
         }
     }
-    document.getElementById("skT").innerHTML = html || `<li class="text-white-50 small">Add skills in sidebar...</li>`;
+    const addBtn = `<button class="add-preview-item-btn no-print" contenteditable="false" onclick="addNewSKfield()"><i class="fas fa-plus"></i> Add Skill</button>`;
+    document.getElementById("skT").innerHTML = html ? (html + addBtn) : addBtn;
 }
 
 function syncExperience() {
@@ -304,10 +306,11 @@ function syncExperience() {
     for (let i = 0; i < inputs.length; i++) {
         const val = inputs[i].value.trim();
         if (val) {
-            html += `<li class="mb-3" contenteditable="true" data-field-group="we" data-index="${i}">${val.replace(/\n/g, '<br>')}</li>`;
+            html += `<li class="mb-3 preview-list-item position-relative" contenteditable="true" data-field-group="we" data-index="${i}">${val.replace(/\n/g, '<br>')}<button class="delete-list-item-btn no-print" contenteditable="false" onclick="deleteListItem('we', ${i})"><i class="fas fa-trash-alt"></i></button></li>`;
         }
     }
-    document.getElementById("weT").innerHTML = html || `<li>Add experience in sidebar...</li>`;
+    const addBtn = `<li class="no-print" contenteditable="false"><button class="add-preview-item-btn" onclick="addNewWEfield()"><i class="fas fa-plus"></i> Add Experience</button></li>`;
+    document.getElementById("weT").innerHTML = html ? (html + addBtn) : addBtn;
 }
 
 // Fixed minor bug where syncEducation/syncProjects weren't properly mapping their lists on start
@@ -317,10 +320,11 @@ function syncEducation() {
     for (let i = 0; i < inputs.length; i++) {
         const val = inputs[i].value.trim();
         if (val) {
-            html += `<li class="mb-2" contenteditable="true" data-field-group="aq" data-index="${i}">${val.replace(/\n/g, '<br>')}</li>`;
+            html += `<li class="mb-2 preview-list-item position-relative" contenteditable="true" data-field-group="aq" data-index="${i}">${val.replace(/\n/g, '<br>')}<button class="delete-list-item-btn no-print" contenteditable="false" onclick="deleteListItem('aq', ${i})"><i class="fas fa-trash-alt"></i></button></li>`;
         }
     }
-    document.getElementById("aqT").innerHTML = html || `<li>Add education in sidebar...</li>`;
+    const addBtn = `<li class="no-print" contenteditable="false"><button class="add-preview-item-btn" onclick="addNewAQfield()"><i class="fas fa-plus"></i> Add Education</button></li>`;
+    document.getElementById("aqT").innerHTML = html ? (html + addBtn) : addBtn;
 }
 
 function syncProjects() {
@@ -329,10 +333,32 @@ function syncProjects() {
     for (let i = 0; i < inputs.length; i++) {
         const val = inputs[i].value.trim();
         if (val) {
-            html += `<li class="mb-2" contenteditable="true" data-field-group="pr" data-index="${i}">${val.replace(/\n/g, '<br>')}</li>`;
+            html += `<li class="mb-2 preview-list-item position-relative" contenteditable="true" data-field-group="pr" data-index="${i}">${val.replace(/\n/g, '<br>')}<button class="delete-list-item-btn no-print" contenteditable="false" onclick="deleteListItem('pr', ${i})"><i class="fas fa-trash-alt"></i></button></li>`;
         }
     }
-    document.getElementById("prT").innerHTML = html || `<li>Add projects in sidebar...</li>`;
+    const addBtn = `<li class="no-print" contenteditable="false"><button class="add-preview-item-btn" onclick="addNewPRfield()"><i class="fas fa-plus"></i> Add Project</button></li>`;
+    document.getElementById("prT").innerHTML = html ? (html + addBtn) : addBtn;
+}
+
+function deleteListItem(group, index) {
+    const inputClass = `${group}Field`;
+    const inputs = document.getElementsByClassName(inputClass);
+    if (inputs[index]) {
+        const parent = inputs[index].closest('.input-group, .experience-block, .education-block, .project-block');
+        if (parent) {
+            parent.remove();
+        } else {
+            inputs[index].remove();
+        }
+        
+        if (group === 'sk') syncSkills();
+        else if (group === 'we') syncExperience();
+        else if (group === 'aq') syncEducation();
+        else if (group === 'pr') syncProjects();
+        
+        saveToLocal();
+        showToast("Item deleted successfully.");
+    }
 }
 
 function syncAll() {
@@ -452,6 +478,7 @@ function createCustomSection(id, title, content) {
             <button class="section-action-btn" onclick="moveSection('${id}', 'up')" title="Move Up"><i class="fas fa-chevron-up"></i></button>
             <button class="section-action-btn" onclick="moveSection('${id}', 'down')" title="Move Down"><i class="fas fa-chevron-down"></i></button>
             <button class="section-action-btn text-danger" onclick="hideSection('${id}')" title="Hide Section"><i class="fas fa-eye-slash"></i></button>
+            <button class="section-action-btn text-danger" onclick="deleteCustomSectionDirect('${id}')" title="Delete Section"><i class="fas fa-trash-alt"></i></button>
         </div>
         <h5 class="fw-bold text-primary mb-3 text-uppercase" contenteditable="true" data-custom-title-id="${id}">${title}</h5>
         <div class="section-content small" contenteditable="true" data-custom-content-id="${id}">
@@ -489,6 +516,17 @@ function removeCustomSection(id, btn) {
         if (previewSec) previewSec.remove();
         btn.closest('.custom-section-item').remove();
         saveToLocal();
+    }
+}
+
+function deleteCustomSectionDirect(id) {
+    if (confirm("Are you sure you want to delete this custom section?")) {
+        const previewSec = document.getElementById(`sec-${id}`);
+        if (previewSec) previewSec.remove();
+        const sidebarSec = document.querySelector(`.custom-section-item[data-id="${id}"]`);
+        if (sidebarSec) sidebarSec.remove();
+        saveToLocal();
+        showToast("Custom section deleted.");
     }
 }
 
@@ -1173,6 +1211,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadFromLocal();
     setupDragAndDrop();
     setupTextSelectionToolbar();
+    checkGeminiApiKey();
 
     // Attach local storage triggers to inputs
     document.querySelectorAll('input, textarea, select').forEach(el => {
@@ -1180,3 +1219,290 @@ document.addEventListener("DOMContentLoaded", () => {
         el.addEventListener('input', saveToLocal);
     });
 });
+
+// --- GEMINI AI ASSISTANT FUNCTIONS ---
+function checkGeminiApiKey() {
+    const key = localStorage.getItem('gemini_api_key');
+    const badge = document.getElementById('apiKeyBadge');
+    const setupContainer = document.getElementById('apiKeySetupContainer');
+    const activeContainer = document.getElementById('apiKeyActiveContainer');
+    const assistantContainer = document.getElementById('aiAssistantContainer');
+
+    if (badge && setupContainer && activeContainer && assistantContainer) {
+        if (key) {
+            badge.innerText = "Configured";
+            badge.className = "badge bg-success-soft text-success fs-xxs";
+            setupContainer.classList.add('d-none');
+            activeContainer.classList.remove('d-none');
+            assistantContainer.classList.remove('opacity-50', 'pointer-events-none');
+        } else {
+            badge.innerText = "Not Configured";
+            badge.className = "badge bg-danger-soft text-danger fs-xxs";
+            setupContainer.classList.remove('d-none');
+            activeContainer.classList.add('d-none');
+            assistantContainer.classList.add('opacity-50', 'pointer-events-none');
+        }
+    }
+}
+
+function saveGeminiApiKey() {
+    const keyInput = document.getElementById('geminiApiKeyInput');
+    if (keyInput && keyInput.value.trim()) {
+        localStorage.setItem('gemini_api_key', keyInput.value.trim());
+        checkGeminiApiKey();
+        showToast("Gemini API Key saved successfully!");
+        keyInput.value = "";
+    } else {
+        showToast("Please enter a valid API Key.");
+    }
+}
+
+function editGeminiApiKey() {
+    localStorage.removeItem('gemini_api_key');
+    checkGeminiApiKey();
+    showToast("Gemini API Key removed.");
+}
+
+function loadAiExample(num) {
+    const textAreas = {
+        1: "Mera naam Amit Sharma hai. Maine 2024 me IIT Delhi se B.Tech kiya Computer Science me. Mujhe JavaScript aur React aati hai. Maine ek social media application banaya hai. Mujhe HTML, CSS, and Git ki achhi knowledge hai. Mera email amit@gmail.com aur phone number +91 9999988888 hai.",
+        2: "Please add a new experience to my resume: 'Software Engineer at Microsoft from July 2024 to Present. Worked on optimizing azure cloud services and improved backend response time by 40% using Node.js and Redis.'"
+    };
+    const input = document.getElementById('aiInputText');
+    if (input && textAreas[num]) {
+        input.value = textAreas[num];
+        input.focus();
+    }
+}
+
+async function processResumeWithAi() {
+    const apiKey = localStorage.getItem('gemini_api_key');
+    if (!apiKey) {
+        showToast("Please configure your Gemini API Key first.");
+        return;
+    }
+
+    const inputText = document.getElementById('aiInputText').value.trim();
+    if (!inputText) {
+        showToast("Please enter some details first.");
+        return;
+    }
+
+    const btn = document.getElementById('aiProcessBtn');
+    const statusLog = document.getElementById('aiStatusLog');
+    const statusTitle = document.getElementById('aiStatusTitle');
+    const statusList = document.getElementById('aiStatusList');
+
+    if (!btn || !statusLog || !statusTitle || !statusList) return;
+
+    // Start loading state
+    btn.disabled = true;
+    const originalBtnHtml = btn.innerHTML;
+    btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>AI Processing...`;
+    statusLog.classList.remove('d-none');
+    statusList.innerHTML = "";
+
+    // Add status log element wrapper if spinner is removed
+    const headerDiv = document.getElementById('aiStatusHeader');
+    let spinner = headerDiv.querySelector('.spinner-border');
+    if (!spinner) {
+        const newSpinner = document.createElement('div');
+        newSpinner.className = 'spinner-border spinner-border-sm text-primary';
+        newSpinner.setAttribute('role', 'status');
+        headerDiv.insertBefore(newSpinner, statusTitle);
+    }
+    statusTitle.innerText = "Analyzing input...";
+
+    function addLog(message, isDone = false) {
+        const li = document.createElement('li');
+        li.className = isDone ? 'text-success mb-1' : 'mb-1 text-light';
+        li.innerHTML = `${isDone ? '✓' : '⚡'} ${message}`;
+        statusList.appendChild(li);
+        statusLog.scrollTop = statusLog.scrollHeight;
+    }
+
+    try {
+        addLog("Gathering current resume information...");
+        
+        // Grab current data from fields
+        const currentData = {
+            name: document.getElementById("nameField").value || "",
+            title: document.getElementById("clField").value || "",
+            email: document.getElementById("emailField").value || "",
+            contact: document.getElementById("contactField").value || "",
+            address: document.getElementById("addressField").value || "",
+            objective: document.getElementById("objectiveField").value || "",
+            linkedin: document.getElementById("linkField").value || "",
+            github: document.getElementById("fbField").value || "",
+            twitter: document.getElementById("instaField").value || "",
+            skills: Array.from(document.getElementsByClassName("skField")).map(el => el.value.trim()).filter(Boolean),
+            experience: Array.from(document.getElementsByClassName("weField")).map(el => el.value.trim()).filter(Boolean),
+            education: Array.from(document.getElementsByClassName("aqField")).map(el => el.value.trim()).filter(Boolean),
+            projects: Array.from(document.getElementsByClassName("prField")).map(el => el.value.trim()).filter(Boolean)
+        };
+
+        addLog("Constructing AI prompt with translation instructions...");
+        
+        const systemInstruction = `You are a professional resume builder assistant. Your job is to take the user's input (written in Hinglish, Hindi, Bengali, or English) and update the resume's details.
+1. Translate all local/informal languages (e.g. Hinglish, Hindi, Bengali) to professional English.
+2. Polish the wording to look professional, polished, and industry-standard.
+3. Merge the new inputs with the existing data. If the user refers to existing items or wants to add to them, append or modify accordingly. If they specify completely new info, update the fields.
+4. Output a single JSON object that strictly adheres to the schema below. Do not output any markdown wrapper, explanation, or code blocks. Just the raw JSON.`;
+
+        const prompt = `${systemInstruction}
+
+Current Resume Data:
+${JSON.stringify(currentData, null, 2)}
+
+User Input (in local language or English):
+"${inputText}"
+
+Output a JSON object matching this schema:
+{
+  "name": "string (Full Name)",
+  "title": "string (Professional Title)",
+  "email": "string (Email Address)",
+  "contact": "string (Phone/Contact Number)",
+  "address": "string (City, Country)",
+  "objective": "string (Professional Summary, 2-3 sentences)",
+  "linkedin": "string (LinkedIn username or URL)",
+  "github": "string (GitHub username or URL)",
+  "twitter": "string (Twitter or other social handle)",
+  "skills": ["string", "string", ...],
+  "experience": ["string", "string", ...],
+  "education": ["string", "string", ...],
+  "projects": ["string", "string", ...]
+}`;
+
+        addLog("Connecting to Gemini API...");
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }],
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            })
+        });
+
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.error?.message || `HTTP error! status: ${response.status}`);
+        }
+
+        addLog("Receiving and parsing response from Gemini...");
+        const result = await response.json();
+        const textResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        
+        if (!textResponse) {
+            throw new Error("No response returned from the Gemini model.");
+        }
+
+        const updatedData = JSON.parse(textResponse);
+        
+        addLog("Updating form fields...");
+
+        // Update Text inputs
+        if (updatedData.name !== undefined) document.getElementById("nameField").value = updatedData.name;
+        if (updatedData.title !== undefined) document.getElementById("clField").value = updatedData.title;
+        if (updatedData.email !== undefined) document.getElementById("emailField").value = updatedData.email;
+        if (updatedData.contact !== undefined) document.getElementById("contactField").value = updatedData.contact;
+        if (updatedData.address !== undefined) document.getElementById("addressField").value = updatedData.address;
+        if (updatedData.objective !== undefined) document.getElementById("objectiveField").value = updatedData.objective;
+        if (updatedData.linkedin !== undefined) document.getElementById("linkField").value = updatedData.linkedin;
+        if (updatedData.github !== undefined) document.getElementById("fbField").value = updatedData.github;
+        if (updatedData.twitter !== undefined) document.getElementById("instaField").value = updatedData.twitter;
+
+        // Update list fields
+        if (updatedData.skills && Array.isArray(updatedData.skills)) {
+            const skContainer = document.getElementById("sk");
+            skContainer.innerHTML = "";
+            updatedData.skills.forEach(skill => {
+                const div = document.createElement("div");
+                div.className = "input-group mb-2";
+                div.innerHTML = `
+                    <input type="text" class="form-control form-control-sm skField" value="${skill}">
+                    <button class="btn btn-outline-danger btn-sm" type="button" onclick="this.closest('.input-group').remove(); syncSkills()"><i class="fas fa-trash"></i></button>
+                `;
+                skContainer.appendChild(div);
+            });
+        }
+
+        if (updatedData.experience && Array.isArray(updatedData.experience)) {
+            const weContainer = document.getElementById("we");
+            weContainer.innerHTML = "";
+            updatedData.experience.forEach(exp => {
+                const div = document.createElement("div");
+                div.className = "experience-block border-bottom pb-2 mb-2 position-relative";
+                div.innerHTML = `
+                    <textarea class="form-control form-control-sm weField" rows="3">${exp}</textarea>
+                    <button class="btn btn-link text-danger btn-sm position-absolute top-0 end-0 p-1" onclick="this.closest('.experience-block').remove(); syncExperience()"><i class="fas fa-trash-alt"></i></button>
+                `;
+                weContainer.appendChild(div);
+            });
+        }
+
+        if (updatedData.education && Array.isArray(updatedData.education)) {
+            const aqContainer = document.getElementById("aq");
+            aqContainer.innerHTML = "";
+            updatedData.education.forEach(edu => {
+                const div = document.createElement("div");
+                div.className = "education-block border-bottom pb-2 mb-2 position-relative";
+                div.innerHTML = `
+                    <textarea class="form-control form-control-sm aqField" rows="2">${edu}</textarea>
+                    <button class="btn btn-link text-danger btn-sm position-absolute top-0 end-0 p-1" onclick="this.closest('.education-block').remove(); syncEducation()"><i class="fas fa-trash-alt"></i></button>
+                `;
+                aqContainer.appendChild(div);
+            });
+        }
+
+        if (updatedData.projects && Array.isArray(updatedData.projects)) {
+            const prContainer = document.getElementById("pr");
+            prContainer.innerHTML = "";
+            updatedData.projects.forEach(proj => {
+                const div = document.createElement("div");
+                div.className = "project-block border-bottom pb-2 mb-2 position-relative";
+                div.innerHTML = `
+                    <textarea class="form-control form-control-sm prField" rows="2">${proj}</textarea>
+                    <button class="btn btn-link text-danger btn-sm position-absolute top-0 end-0 p-1" onclick="this.closest('.project-block').remove(); syncProjects()"><i class="fas fa-trash-alt"></i></button>
+                `;
+                prContainer.appendChild(div);
+            });
+        }
+
+        addLog("Syncing preview layout...", true);
+        syncAll();
+        saveToLocal();
+        
+        statusTitle.innerText = "Resume Updated!";
+        const curSpinner = headerDiv.querySelector('.spinner-border');
+        if (curSpinner) curSpinner.remove();
+        showToast("Resume successfully updated by AI!");
+        document.getElementById('aiInputText').value = "";
+        
+        // Hide log after 5 seconds
+        setTimeout(() => {
+            statusLog.classList.add('d-none');
+        }, 5000);
+
+    } catch (error) {
+        console.error("AI Error:", error);
+        addLog(`Error: ${error.message}`);
+        statusTitle.innerText = "Processing Failed";
+        const curSpinner = headerDiv.querySelector('.spinner-border');
+        if (curSpinner) curSpinner.remove();
+        showToast("Failed to process resume with AI.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHtml;
+    }
+}
